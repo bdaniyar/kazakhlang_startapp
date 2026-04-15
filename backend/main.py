@@ -133,11 +133,17 @@ def seed_data(db: Session) -> None:
         else:
             db.add(Animal(**item))
 
-    stale_animals = [animal for animal in current_animals if animal.name not in expected_names]
+    stale_animals = [
+        animal for animal in current_animals if animal.name not in expected_names
+    ]
     stale_ids = [animal.id for animal in stale_animals]
     if stale_ids:
-        db.query(Donation).filter(Donation.animal_id.in_(stale_ids)).delete(synchronize_session=False)
-        db.query(Animal).filter(Animal.id.in_(stale_ids)).delete(synchronize_session=False)
+        db.query(Donation).filter(Donation.animal_id.in_(stale_ids)).delete(
+            synchronize_session=False
+        )
+        db.query(Animal).filter(Animal.id.in_(stale_ids)).delete(
+            synchronize_session=False
+        )
 
     db.commit()
 
@@ -184,6 +190,10 @@ def donate(payload: DonationCreate):
         db.add(donation)
         db.commit()
         db.refresh(donation)
-        return {"id": donation.id, "animal_id": donation.animal_id, "amount": donation.amount}
+        return {
+            "id": donation.id,
+            "animal_id": donation.animal_id,
+            "amount": donation.amount,
+        }
     finally:
         db.close()
