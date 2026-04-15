@@ -77,3 +77,4 @@ Set in Vercel → *Settings → Environment Variables*:
 
 ### Frontend
 - `frontend/vercel.json` — SPA rewrite for React Router
+.
