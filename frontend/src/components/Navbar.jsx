@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 const links = [
   { to: '/', label: 'Басты бет' },
   { to: '/zhanuarlar', label: 'Жануарлар' },
-  { to: '/angimeler', label: 'Әңгімелер' },
+  { to: '/qalai-komektesemiz', label: 'Қалай көмектесеміз' },
   { to: '/zhoba-turaly', label: 'Жоба туралы' },
   { to: '/bailanys', label: 'Байланыс' },
 ]
