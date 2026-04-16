@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import CatalogPage from './pages/CatalogPage'
@@ -9,10 +9,13 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 
 function App() {
+  const location = useLocation()
+  const isDonatePage = location.pathname === '/qoldau'
+
   return (
     <div className="app-shell">
       <Navbar />
-      <main className="container">
+      <main className={isDonatePage ? 'container container-wide' : 'container'}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/zhanuarlar" element={<CatalogPage />} />

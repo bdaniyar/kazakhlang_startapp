@@ -12,6 +12,11 @@ function DonatePage() {
   const [customAmount, setCustomAmount] = useState('')
   const [message, setMessage] = useState('')
   const [progressByAnimal, setProgressByAnimal] = useState({})
+  const [paymentMethod, setPaymentMethod] = useState('kaspi')
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardName, setCardName] = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const [cardCvc, setCardCvc] = useState('')
   const location = useLocation()
 
   const queryAnimalId = useMemo(() => {
@@ -79,6 +84,34 @@ function DonatePage() {
     setMessage('')
   }
 
+  const onPaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value)
+    setMessage('')
+  }
+
+  const onCardNumberChange = (event) => {
+    const next = event.target.value.replace(/\s+/g, '')
+    if (next !== '' && !/^[0-9]{0,19}$/.test(next)) return
+
+    // regroup into chunks for readability
+    const grouped = next.replace(/(.{4})/g, '$1 ').trim()
+    setCardNumber(grouped)
+    setMessage('')
+  }
+
+  const onCardExpiryChange = (event) => {
+    const raw = event.target.value.replace(/[^0-9]/g, '').slice(0, 4)
+    const formatted = raw.length <= 2 ? raw : `${raw.slice(0, 2)}/${raw.slice(2)}`
+    setCardExpiry(formatted)
+    setMessage('')
+  }
+
+  const onCardCvcChange = (event) => {
+    const next = event.target.value.replace(/[^0-9]/g, '').slice(0, 4)
+    setCardCvc(next)
+    setMessage('')
+  }
+
   const onCustomChange = (event) => {
     const next = event.target.value
     // allow only digits
@@ -98,12 +131,19 @@ function DonatePage() {
     }
 
     try {
+      // Payment logic is intentionally not implemented (prototype UI only).
+      // Here we only register the intent in backend.
       const result = await createDonation({ animal_id: Number(animalId), amount })
 
       // Backend updates progress; update UI immediately as well.
       if (typeof result?.progress === 'number') {
         setProgress(animalId, result.progress)
       }
+
+      setCardNumber('')
+      setCardName('')
+      setCardExpiry('')
+      setCardCvc('')
 
       setMessage('Рақмет! Қолдауыңыз базаға тіркелді.')
     } catch {
@@ -112,7 +152,7 @@ function DonatePage() {
   }
 
   return (
-    <section className="page">
+    <section className="page donate-page">
       <header className="donate-header">
         <h1>Қолдау беті</h1>
         <p className="lead-text">
@@ -189,6 +229,89 @@ function DonatePage() {
             <div className="donate-summary">
               <span>Таңдалған сома:</span>
               <strong>{amount.toLocaleString('kk-KZ')} ₸</strong>
+            </div>
+
+            <div className="donate-payment">
+              <h3>Төлем тәсілі</h3>
+
+              <div className="donate-payment-methods" role="radiogroup" aria-label="Төлем тәсілін таңдаңыз">
+                <label className="pay-option">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="kaspi"
+                    checked={paymentMethod === 'kaspi'}
+                    onChange={onPaymentMethodChange}
+                  />
+                  <span className="pay-option-text">Kaspi.kz</span>
+                </label>
+
+                <label className="pay-option">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={onPaymentMethodChange}
+                  />
+                  <span className="pay-option-text">Карта (Visa / MasterCard)</span>
+                </label>
+              </div>
+
+              {paymentMethod === 'kaspi' ? (
+                <div className="pay-kaspi">
+                  <p className="lead-text">
+                    Kaspi арқылы төлеу логикасы әзірге қосылмаған. Бұл жерде тек интерфейс көрсетіледі.
+                  </p>
+                  <button className="btn btn-outline" type="button" onClick={() => setMessage('Kaspi төлемі әзірге қосылмаған (UI ғана).')}
+                  >
+                    Kaspi арқылы төлеу
+                  </button>
+                </div>
+              ) : (
+                <div className="pay-card">
+                  <div className="pay-card-grid">
+                    <label>
+                      Карта нөмірі
+                      <input
+                        inputMode="numeric"
+                        placeholder="1234 5678 9012 3456"
+                        value={cardNumber}
+                        onChange={onCardNumberChange}
+                      />
+                    </label>
+                    <label>
+                      Карта иесі
+                      <input
+                        placeholder="NAME SURNAME"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      Жарамдылық мерзімі
+                      <input
+                        inputMode="numeric"
+                        placeholder="MM/YY"
+                        value={cardExpiry}
+                        onChange={onCardExpiryChange}
+                      />
+                    </label>
+                    <label>
+                      CVC/CVV
+                      <input
+                        inputMode="numeric"
+                        placeholder="123"
+                        value={cardCvc}
+                        onChange={onCardCvcChange}
+                      />
+                    </label>
+                  </div>
+                  <p className="donate-hint">
+                    Бұл — тек макет. Нақты төлем өңдеу қосылмаған.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
