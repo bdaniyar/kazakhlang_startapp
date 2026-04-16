@@ -193,6 +193,19 @@ p {
   color: #fff;
 }
 
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-primary:active {
+  background: #1e40af;
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
+}
+
 .btn-outline {
   border: 1px solid #93c5fd;
   color: #1d4ed8;
@@ -559,6 +572,103 @@ textarea {
 .text-block li {
   color: #334155;
   line-height: 1.55;
+}
+
+/* Contact page (stacked layout) */
+.contact-block {
+  background: #ffffff;
+  border: 1px solid #d9e5f8;
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.08);
+}
+
+/* Keep separators consistent inside stacked blocks */
+.contact-block h1,
+.contact-block h3 {
+  margin-bottom: 0.5rem;
+}
+
+.contact-info ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  color: #334155;
+}
+
+.contact-info a {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.contact-info a:hover {
+  color: #1e40af;
+}
+
+.contact-label {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.contact-note {
+  margin-top: 0.85rem;
+  color: #475569;
+}
+
+.contact-actions {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+/* Contact page: make primary CTA more readable inside info block */
+.contact-info .btn-primary {
+  background: #1d4ed8;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.contact-info .btn-primary:hover {
+  background: #1e40af;
+}
+
+/* Form spacing polish */
+.contact-form {
+  max-width: none;
+}
+
+.contact-form label {
+  gap: 0.35rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  background: #ffffff;
+}
+
+/* FAQ card uses the same base block but with inner items */
+.contact-faq-items {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.contact-faq-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 0.95rem;
+}
+
+.contact-faq-item h4 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.contact-faq-item p {
+  color: #334155;
 }
 
 .text-block strong {
