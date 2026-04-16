@@ -866,3 +866,31 @@ textarea {
     max-width: 1120px;
   }
 }
+/* Donate page: spacing polish */
+.donate-page .donate-form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.donate-page .donate-form-row {
+  margin: 0;
+}
+
+.donate-page .donate-amount-section {
+  gap: 1rem;
+}
+
+.donate-page .donate-payment {
+  margin-top: 0.5rem;
+}
+
+.donate-page .pay-kaspi,
+.donate-page .pay-card {
+  margin-top: 0.35rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.donate-page .donate-submit {
+  margin-top: 0.2rem;
+}
