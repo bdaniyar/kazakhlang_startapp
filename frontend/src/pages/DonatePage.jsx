@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { createDonation, getAnimals } from '../services/api'
 
 const presetAmounts = [1000, 5000, 10000]
+const goalAmount = 100_000
 
 function DonatePage() {
   const [animals, setAnimals] = useState([])
@@ -10,6 +11,7 @@ function DonatePage() {
   const [selectedAmount, setSelectedAmount] = useState(presetAmounts[0])
   const [customAmount, setCustomAmount] = useState('')
   const [message, setMessage] = useState('')
+  const [progressByAnimal, setProgressByAnimal] = useState({})
   const location = useLocation()
 
   const queryAnimalId = useMemo(() => {
@@ -22,6 +24,45 @@ function DonatePage() {
     if (Number.isFinite(custom) && custom > 0) return custom
     return selectedAmount
   }, [customAmount, selectedAmount])
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('qamqor_progress')
+      if (raw) setProgressByAnimal(JSON.parse(raw))
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const getProgress = (id) => {
+    const value = progressByAnimal[String(id)]
+    const numeric = Number(value)
+
+    // If you already have progress from backend/story text (e.g., 25, 35), keep it as-is.
+    // Otherwise start from a consistent default.
+    if (Number.isFinite(numeric) && numeric >= 0) return Math.min(100, Math.round(numeric))
+
+    // Default starting point so the UI matches the previously shown examples (25%, 35%, etc.)
+    return 25
+  }
+
+  const setProgress = (id, nextValue) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(nextValue)))
+    setProgressByAnimal((prev) => {
+      const next = { ...prev, [String(id)]: clamped }
+      try {
+        localStorage.setItem('qamqor_progress', JSON.stringify(next))
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }
+
+  const selectedProgress = useMemo(() => {
+    if (!animalId) return 0
+    return getProgress(animalId)
+  }, [animalId, progressByAnimal])
 
   useEffect(() => {
     getAnimals()
@@ -57,7 +98,13 @@ function DonatePage() {
     }
 
     try {
-      await createDonation({ animal_id: Number(animalId), amount })
+      const result = await createDonation({ animal_id: Number(animalId), amount })
+
+      // Backend updates progress; update UI immediately as well.
+      if (typeof result?.progress === 'number') {
+        setProgress(animalId, result.progress)
+      }
+
       setMessage('Рақмет! Қолдауыңыз базаға тіркелді.')
     } catch {
       setMessage('Қателік пайда болды. Кейінірек қайталап көріңіз.')
@@ -85,6 +132,22 @@ function DonatePage() {
               ))}
             </select>
           </label>
+        </div>
+
+        <div className="progress-box donate-progress" aria-label="Қолдау прогресі">
+          <div className="donate-progress-top">
+            <strong>Қолдау прогресі</strong>
+            <span className="donate-progress-value">{selectedProgress}%</span>
+          </div>
+          <div
+            className="progress-track"
+            role="progressbar"
+            aria-valuenow={selectedProgress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <span style={{ width: `${selectedProgress}%` }} />
+          </div>
         </div>
 
         <div className="donate-form-row">
